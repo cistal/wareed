@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WAREED | وَريد — Monitoring</title><link rel="icon" href="assets/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--wine:#7a1c24;--deep:#3d0d12;--crim:#a32a30;--rose:#f3e4e3;--ivory:#fcfaf8;--ink:#2a1214;--mute:#6b5456;--line:#e8d9d8}
+*{box-sizing:border-box;margin:0}body{font:15px/1.55 Manrope,system-ui,sans-serif;background:var(--ivory);color:var(--ink)}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;color:var(--deep)}:focus-visible{outline:3px solid var(--crim);outline-offset:2px}
+.hide{display:none!important}button{font:inherit;cursor:pointer}
+.btn{padding:9px 18px;border-radius:9px;border:2px solid var(--wine);background:var(--wine);color:#fff;font-weight:700}.btn.s{background:#fff;color:var(--wine)}.btn:disabled{opacity:.5}
+#login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(180deg,var(--rose),var(--ivory))}
+.box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:30px;width:min(400px,100%);box-shadow:0 18px 50px rgba(61,13,18,.12)}
+.box img{height:56px;mix-blend-mode:multiply;margin-bottom:14px}label{display:block;font-weight:600;margin:12px 0 4px}
+input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font:inherit}
+.err{color:var(--crim);margin-top:10px;min-height:1.4em}.demo{margin-top:16px;background:var(--rose);border-radius:8px;padding:10px 12px;font-size:.84rem}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 22px;background:#fff;border-bottom:1px solid var(--line)}
+header img{height:40px;mix-blend-mode:multiply}main{max-width:1200px;margin:auto;padding:22px}
+.badge{background:#fff3d6;color:#b7791f;padding:3px 12px;border-radius:99px;font-size:.78rem;font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}.kpi b{font:600 2rem Fraunces,serif;color:var(--wine);display:block}.kpi span{color:var(--mute);font-size:.85rem}
+.cols{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}.bar{display:flex;height:14px;border-radius:99px;overflow:hidden;background:var(--line);margin:8px 0}.bar i{display:block}
+.al{border:1px solid var(--line);border-radius:12px;margin-top:10px;overflow:hidden}.al>button{width:100%;text-align:start;display:flex;gap:10px;align-items:center;padding:12px 14px;background:#fff;border:0}
+.r{font-size:.75rem;font-weight:700;padding:2px 10px;border-radius:99px;color:#fff;flex:none}.Critical{background:#a32a30}.High{background:#c9792b}.Medium{background:#a58b27}.Low{background:#2f7a55}
+.det{padding:0 14px 14px;font-size:.9rem;color:var(--mute)}.det ul{padding-inline-start:18px;margin:6px 0}.det b{color:var(--ink)}.rev{opacity:.5}
+table{width:100%;border-collapse:collapse;font-size:.88rem}td,th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:start}th{color:var(--mute);font-weight:600}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.warn{color:#c9792b;font-weight:700}.bad{color:var(--crim);font-weight:700}
+@media(max-width:860px){.kpis{grid-template-columns:1fr 1fr}.cols{grid-template-columns:1fr}}
+</style></head><body>
+<div id="login"><div class="box"><img src="assets/logo-full.png" alt="WAREED">
+<h2>Sign in</h2><label for="u">Username</label><input id="u" autocomplete="username"><label for="p">Password</label><input id="p" type="password" autocomplete="current-password">
+<button class="btn" id="go" style="margin-top:16px;width:100%">Sign in</button><div class="err" id="err" role="alert"></div>
+<div class="demo"><b>Prototype demo accounts</b> (simulated data)<br>admin, doctor, security, nurse<br>Password: <code>Wareed@2026</code><br>Roles limit what each account can do.</div></div></div>
+<div id="app" class="hide"><header><img src="assets/logo-full.png" alt="WAREED"><div><span class="badge">Synthetic demonstration data</span> <span id="who" style="margin:0 10px;color:var(--mute)"></span><button class="btn s" id="out">Sign out</button></div></header>
+<main><h1>Hospital monitoring</h1><p style="color:var(--mute)">Alerts are decision support, not confirmed diagnoses or proof of a cyberattack.</p>
+<div class="kpis"><div class="card kpi"><b id="k1"></b><span>Monitored patients</span></div><div class="card kpi"><b id="k2"></b><span>Active devices</span></div><div class="card kpi"><b id="k3"></b><span>Open alerts</span></div><div class="card kpi"><b id="k4"></b><span>Critical alerts</span></div></div>
+<div class="cols"><div class="card"><h2>Alerts</h2><div id="alerts"></div></div>
+<div><div class="card"><h3>Risk distribution (open alerts)</h3><div class="bar" id="bar"></div><small id="leg" style="color:var(--mute)"></small></div>
+<div class="card" style="margin-top:14px"><h3>Devices</h3><table id="dev"></table></div>
+<div class="card" style="margin-top:14px"><h3>Recent suspicious activity</h3><table id="logs"></table></div>
+<div class="card" style="margin-top:14px" id="simbox"><h3>Run a simulated scenario</h3><div class="tools"><button class="btn s" data-s="tamper">Prescription tampering</button><button class="btn s" data-s="device">Device anomaly</button><button class="btn s" data-s="vitals">Patient risk</button><button class="btn s" data-s="reset">Reset</button></div></div></div></div>
+<div class="card" style="margin-top:14px"><h2>Patients</h2><table id="pts"></table></div></main></div>
+<script>
+const $=id=>document.getElementById(id);let T=sessionStorage.getItem('w_t'),P=JSON.parse(sessionStorage.getItem('w_p')||'[]'),R=sessionStorage.getItem('w_r')||'',open=new Set();
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function api(path,opt={}){const r=await fetch('/api/'+path,{...opt,headers:{'Content-Type':'application/json',...(T?{Authorization:'Bearer '+T}:{})}});
+ if(r.status==401&&T){out();throw 0}const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.detail||'Request failed');return j}
+function out(){T=null;sessionStorage.clear();$('app').classList.add('hide');$('login').classList.remove('hide')}
+$('out').onclick=out;
+$('go').onclick=async()=>{$('err').textContent='';try{const j=await api('login',{method:'POST',body:JSON.stringify({username:$('u').value.trim(),password:$('p').value})});
+ T=j.token;P=j.perms;R=j.role;sessionStorage.setItem('w_t',T);sessionStorage.setItem('w_p',JSON.stringify(P));sessionStorage.setItem('w_r',R);show()}catch(e){$('err').textContent=e.message}};
+$('p').onkeydown=e=>e.key==='Enter'&&$('go').click();
+async function show(){$('login').classList.add('hide');$('app').classList.remove('hide');$('who').textContent=R.replace('_',' ');$('simbox').classList.toggle('hide',!P.includes('simulate'));load()}
+async function load(){const d=await api('dashboard');$('k1').textContent=d.patients;$('k2').textContent=d.active_devices+'/'+d.device_count;$('k3').textContent=d.open_alerts;$('k4').textContent=d.risk.Critical;
+ const col={Critical:'#a32a30',High:'#d98a3d',Medium:'#e3c15f',Low:'#6faa86'};$('bar').innerHTML=Object.keys(col).map(k=>`<i style="width:${d.open_alerts?d.risk[k]/d.open_alerts*100:0}%;background:${col[k]}"></i>`).join('');
+ $('leg').textContent=Object.keys(col).map(k=>k+' '+d.risk[k]).join(' · ');
+ $('alerts').innerHTML=d.alerts.length?d.alerts.map(a=>`<div class="al ${a.reviewed?'rev':''}"><button aria-expanded="${open.has(a.id)}" data-k="${a.id}"><span class="r ${a.risk}">${a.risk}</span><b>${esc(a.title)}</b><span style="margin-inline-start:auto;color:var(--mute)">${esc(a.subject)}${a.reviewed?' · reviewed':''}</span></button>
+ <div class="det ${open.has(a.id)?'':'hide'}"><p><b>Why:</b> ${esc(a.why)}</p><p><b>Related events</b></p><ul>${a.related.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><p><b>Detected:</b> ${esc(a.at.replace('T',' ').slice(0,16))} UTC</p><p><b>Next step:</b> ${esc(a.next)}</p>
+ ${P.includes('review')&&!a.reviewed?`<div class="tools"><button class="btn" data-r="${a.id}">Mark as reviewed</button></div>`:''}</div></div>`).join(''):'<p style="color:var(--mute);margin-top:10px">No alerts. Run a simulated scenario to see how alerts work.</p>';
+ $('dev').innerHTML='<tr><th>ID</th><th>Type</th><th>Status</th></tr>'+d.devices.map(x=>`<tr><td>${x.id}</td><td>${x.type}</td><td class="${x.status=='online'?'':'warn'}">${x.status}</td></tr>`).join('');
+ $('logs').innerHTML='<tr><th>Event</th><th>User</th><th>IP</th></tr>'+d.logs.map(l=>`<tr><td>${esc(l.event)}</td><td>${esc(l.user)}</td><td>${esc(l.ip)}</td></tr>`).join('');
+ $('pts').innerHTML='<tr><th>ID</th><th>Ward</th><th>Device</th><th>HR</th><th>BP</th><th>SpO2</th><th>Temp</th><th>Glucose</th></tr>'+d.patient_list.map(p=>{const v=p.vitals;return`<tr><td>${p.id}</td><td>${p.ward}</td><td>${p.device}</td><td class="${v.hr>120?'bad':''}">${v.hr}</td><td>${v.sbp}</td><td class="${v.spo2<92?'bad':''}">${v.spo2}%</td><td class="${v.temp>38.5?'bad':''}">${v.temp}</td><td>${v.glu}</td></tr>`}).join('')}
+document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
+ try{if(b.dataset.k){open.has(b.dataset.k)?open.delete(b.dataset.k):open.add(b.dataset.k);load()}
+ else if(b.dataset.r){await api(`alerts/${b.dataset.r}/review`,{method:'POST'});load()}
+ else if(b.dataset.s){await api('simulate',{method:'POST',body:JSON.stringify({scenario:b.dataset.s})});load()}}catch(x){if(x)alert(x.message)}});
+if(T)show().catch(out);
+</script></body></html>
